@@ -1,5 +1,6 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_iot_device_type_manager,otm.iot.device.type manager,model_otm_iot_device_type,group_iot_manager,1,1,1,1
+access_iot_device_type_portal,otm.iot.device.type portal,model_otm_iot_device_type,group_iot_customer_portal,1,0,0,0
 access_iot_device_manager,otm.iot.device manager,model_otm_iot_device,group_iot_manager,1,1,1,1
 access_iot_device_channel_manager,otm.iot.device.channel manager,model_otm_iot_device_channel,group_iot_manager,1,1,1,1
 access_iot_device_command_manager,otm.iot.device.command manager,model_otm_iot_device_command,group_iot_manager,1,1,1,1
