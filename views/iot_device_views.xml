@@ -77,6 +77,7 @@
                                     <field name="channel_no"/>
                                     <field name="name"/>
                                     <field name="is_on"/>
+                                    <field name="is_favorite"/>
                                     <field name="last_changed"/>
                                 </list>
                             </field>

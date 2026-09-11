@@ -11,6 +11,7 @@ class IotDeviceChannel(models.Model):
     channel_no = fields.Integer(string='Channel No.', required=True)
     name = fields.Char(string='Label', required=True, help='Customer-facing name, e.g. "Living Room Light"')
     is_on = fields.Boolean(string='On', default=False)
+    is_favorite = fields.Boolean(string='Favorite', default=True, help='Shown in the app\'s "Favourite Switches" grid and included in Start/Stop Home scene actions')
     last_changed = fields.Datetime(string='Last Changed')
 
     _device_channel_uniq = models.Constraint('unique(device_id, channel_no)', 'Channel numbers must be unique per device.')

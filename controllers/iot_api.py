@@ -209,9 +209,34 @@ class IotCustomerController(http.Controller):
                     'channel_no': c.channel_no,
                     'name': c.name,
                     'is_on': c.is_on,
+                    'is_favorite': c.is_favorite,
                 } for c in d.channel_ids],
             } for d in devices],
         })
+
+    @http.route('/api/iot/devices/bulk-toggle', type='http', auth='user', methods=['POST'], csrf=False)
+    def bulk_toggle(self, **kwargs):
+        """Powers the 'Start Home' / 'Stop Home' scene buttons: queues on/off commands for
+        every favorite channel across all of this customer's devices in one call."""
+        payload = _get_json_body()
+        partner = request.env.user.partner_id
+        turn = payload.get('turn')  # 'on' or 'off'
+        if turn not in ('on', 'off'):
+            return _json_response({'error': 'turn_must_be_on_or_off'}, status=400)
+        if not partner.iot_subscription_active:
+            return _json_response({'error': 'subscription_inactive'}, status=403)
+
+        devices = request.env['otm.iot.device'].search([('partner_id', '=', partner.id)])
+        queued = 0
+        for device in devices:
+            channels = device.channel_ids.filtered(lambda c: c.is_favorite)
+            for channel in channels:
+                if (turn == 'on') == channel.is_on:
+                    continue  # already in the target state, nothing to queue
+                device.action_send_command(channel.channel_no, turn)
+                queued += 1
+
+        return _json_response({'ok': True, 'queued': queued})
 
     @http.route('/api/iot/device/toggle', type='http', auth='user', methods=['POST'], csrf=False)
     def toggle_channel(self, **kwargs):
