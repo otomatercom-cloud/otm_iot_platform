@@ -7,8 +7,10 @@
             <list>
                 <field name="name"/>
                 <field name="partner_id"/>
+                <field name="is_claimed" optional="hide"/>
                 <field name="device_type_id"/>
                 <field name="external_id"/>
+                <field name="claim_code"/>
                 <field name="status"/>
                 <field name="last_seen"/>
                 <field name="location"/>
@@ -48,15 +50,19 @@
             <form>
                 <header>
                     <button name="action_regenerate_secret" type="object" string="Regenerate Device Secret" class="btn-secondary"/>
+                    <button name="action_regenerate_claim_code" type="object" string="Regenerate Claim Code" class="btn-secondary"/>
                 </header>
                 <sheet>
+                    <widget name="web_ribbon" title="Unclaimed" bg_color="text-bg-warning" invisible="is_claimed"/>
                     <div class="oe_title">
                         <label for="name"/>
                         <h1><field name="name"/></h1>
                     </div>
                     <group>
                         <group>
-                            <field name="partner_id"/>
+                            <field name="partner_id" placeholder="Leave blank for unclaimed stock"/>
+                            <field name="is_claimed" invisible="1"/>
+                            <field name="claim_code"/>
                             <field name="device_type_id"/>
                             <field name="protocol"/>
                             <field name="external_id"/>
@@ -108,9 +114,29 @@
         </field>
     </record>
 
+    <record id="view_iot_device_search" model="ir.ui.view">
+        <field name="name">otm.iot.device.search</field>
+        <field name="model">otm.iot.device</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="external_id"/>
+                <field name="claim_code"/>
+                <field name="partner_id"/>
+                <filter name="unclaimed" string="Unclaimed Stock" domain="[('partner_id', '=', False)]"/>
+                <filter name="claimed" string="Claimed" domain="[('partner_id', '!=', False)]"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_by_partner" string="Customer" context="{'group_by': 'partner_id'}"/>
+                    <filter name="group_by_type" string="Device Type" context="{'group_by': 'device_type_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
     <record id="action_iot_device" model="ir.actions.act_window">
         <field name="name">Devices</field>
         <field name="res_model">otm.iot.device</field>
         <field name="view_mode">kanban,list,form</field>
+        <field name="search_view_id" ref="view_iot_device_search"/>
     </record>
 </odoo>

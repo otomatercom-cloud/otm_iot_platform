@@ -190,6 +190,18 @@ class IotCustomerController(http.Controller):
         })
         return _json_response({'ok': True, 'status': 'pending_verification', 'payment_id': payment.id})
 
+    @http.route('/api/iot/devices/claim', type='http', auth='user', methods=['POST'], csrf=False)
+    def claim_device(self, **kwargs):
+        payload = _get_json_body()
+        partner = request.env.user.partner_id
+        claim_code = payload.get('claim_code')
+
+        device, error = request.env['otm.iot.device'].sudo().claim_device(claim_code, partner)
+        if error:
+            return _json_response({'error': error}, status=400)
+
+        return _json_response({'ok': True, 'device_id': device.id, 'device_name': device.name})
+
     @http.route('/api/iot/devices', type='http', auth='user', methods=['GET'], csrf=False)
     def list_devices(self, **kwargs):
         partner = request.env.user.partner_id
