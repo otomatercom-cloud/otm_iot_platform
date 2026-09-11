@@ -125,10 +125,6 @@
                 <field name="partner_id"/>
                 <filter name="unclaimed" string="Unclaimed Stock" domain="[('partner_id', '=', False)]"/>
                 <filter name="claimed" string="Claimed" domain="[('partner_id', '!=', False)]"/>
-                <group expand="0" string="Group By">
-                    <filter name="group_by_partner" string="Customer" context="{'group_by': 'partner_id'}"/>
-                    <filter name="group_by_type" string="Device Type" context="{'group_by': 'device_type_id'}"/>
-                </group>
             </search>
         </field>
     </record>
