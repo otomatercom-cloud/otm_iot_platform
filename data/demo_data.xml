@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ================= Device Types ================= -->
+    <record id="demo_device_type_relay_1ch" model="otm.iot.device.type">
+        <field name="name">Single Relay Switch</field>
+        <field name="code">DEMO-RELAY-1CH</field>
+        <field name="protocol">mqtt</field>
+        <field name="channel_count">1</field>
+        <field name="icon">switch</field>
+        <field name="description">Single-channel WiFi relay switch (ESP32 firmware) for lights, fans, and small appliances.</field>
+    </record>
+
+    <record id="demo_device_type_relay_4ch" model="otm.iot.device.type">
+        <field name="name">4-Channel Relay Board</field>
+        <field name="code">DEMO-RELAY-4CH</field>
+        <field name="protocol">mqtt</field>
+        <field name="channel_count">4</field>
+        <field name="icon">switch</field>
+        <field name="description">Four-channel WiFi relay board for controlling multiple lights/appliances from one device.</field>
+    </record>
+
+    <record id="demo_device_type_tuya_plug" model="otm.iot.device.type">
+        <field name="name">Smart Plug</field>
+        <field name="code">DEMO-PLUG-TUYA</field>
+        <field name="protocol">tuya</field>
+        <field name="channel_count">1</field>
+        <field name="icon">plug</field>
+        <field name="description">Third-party Tuya-compatible smart plug, controlled via Tuya Cloud API.</field>
+    </record>
+
+    <!-- ================= Subscription Plans ================= -->
+    <record id="demo_plan_starter" model="otm.iot.subscription.plan">
+        <field name="name">Starter</field>
+        <field name="price">499</field>
+        <field name="duration_days">30</field>
+        <field name="max_devices">3</field>
+        <field name="description">Up to 3 devices. Good for a single room or small apartment.</field>
+    </record>
+
+    <record id="demo_plan_pro" model="otm.iot.subscription.plan">
+        <field name="name">Pro</field>
+        <field name="price">999</field>
+        <field name="duration_days">30</field>
+        <field name="max_devices">10</field>
+        <field name="description">Up to 10 devices. Good for a full home.</field>
+    </record>
+
+    <record id="demo_plan_business" model="otm.iot.subscription.plan">
+        <field name="name">Business</field>
+        <field name="price">2499</field>
+        <field name="duration_days">90</field>
+        <field name="max_devices">50</field>
+        <field name="description">Up to 50 devices, quarterly billing. Good for offices/multi-branch use.</field>
+    </record>
+
+    <!-- ================= Demo Devices (unclaimed stock, fixed claim codes for testing) ================= -->
+    <record id="demo_device_switch_01" model="otm.iot.device">
+        <field name="name">[DEMO] Living Room Switch</field>
+        <field name="device_type_id" ref="demo_device_type_relay_1ch"/>
+        <field name="external_id">DEMO-EXT-0001</field>
+        <field name="claim_code">DEMO0001</field>
+        <field name="location">Living Room</field>
+    </record>
+
+    <record id="demo_device_switch_02" model="otm.iot.device">
+        <field name="name">[DEMO] Bedroom Relay Board</field>
+        <field name="device_type_id" ref="demo_device_type_relay_4ch"/>
+        <field name="external_id">DEMO-EXT-0002</field>
+        <field name="claim_code">DEMO0002</field>
+        <field name="location">Bedroom</field>
+    </record>
+
+    <record id="demo_device_plug_01" model="otm.iot.device">
+        <field name="name">[DEMO] Kitchen Smart Plug</field>
+        <field name="device_type_id" ref="demo_device_type_tuya_plug"/>
+        <field name="external_id">DEMO-EXT-0003</field>
+        <field name="claim_code">DEMO0003</field>
+        <field name="location">Kitchen</field>
+    </record>
+</odoo>

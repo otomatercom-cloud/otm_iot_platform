@@ -24,6 +24,7 @@ customer app and for the external MQTT/Tuya bridge service.
         'security/iot_security.xml',
         'security/ir.model.access.csv',
         'data/iot_sequence.xml',
+        'data/demo_data.xml',
         'views/iot_device_type_views.xml',
         'views/iot_device_views.xml',
         'views/iot_subscription_views.xml',
