@@ -24,14 +24,61 @@
         <field name="name">otm.iot.subscription.payment.list</field>
         <field name="model">otm.iot.subscription.payment</field>
         <field name="arch" type="xml">
-            <list>
+            <list decoration-warning="not verified">
                 <field name="partner_id"/>
                 <field name="plan_name"/>
                 <field name="amount"/>
+                <field name="payment_method"/>
                 <field name="payment_date"/>
                 <field name="valid_until"/>
                 <field name="payment_reference"/>
+                <field name="verified"/>
             </list>
+        </field>
+    </record>
+
+    <record id="view_iot_subscription_payment_form" model="ir.ui.view">
+        <field name="name">otm.iot.subscription.payment.form</field>
+        <field name="model">otm.iot.subscription.payment</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_verify_payment" type="object" string="Verify &amp; Activate"
+                            class="btn-primary" invisible="verified"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="partner_id"/>
+                            <field name="plan_id"/>
+                            <field name="amount"/>
+                            <field name="payment_method"/>
+                        </group>
+                        <group>
+                            <field name="payment_date"/>
+                            <field name="valid_until"/>
+                            <field name="payment_reference"/>
+                            <field name="customer_note" invisible="payment_method != 'bank_transfer'"/>
+                            <field name="verified"/>
+                            <field name="verified_date" invisible="not verified"/>
+                            <field name="verified_by" invisible="not verified"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_iot_subscription_payment_search" model="ir.ui.view">
+        <field name="name">otm.iot.subscription.payment.search</field>
+        <field name="model">otm.iot.subscription.payment</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="partner_id"/>
+                <field name="payment_reference"/>
+                <filter name="unverified" string="Pending Verification" domain="[('verified', '=', False)]"/>
+                <filter name="bank_transfer" string="Bank Transfer" domain="[('payment_method', '=', 'bank_transfer')]"/>
+            </search>
         </field>
     </record>
 
@@ -39,5 +86,7 @@
         <field name="name">Subscription Payments</field>
         <field name="res_model">otm.iot.subscription.payment</field>
         <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_iot_subscription_payment_search"/>
+        <field name="context">{'search_default_unverified': 1}</field>
     </record>
 </odoo>

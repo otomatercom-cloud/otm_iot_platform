@@ -26,16 +26,19 @@ class ResPartner(models.Model):
             partner.iot_device_count = len(partner.iot_device_ids)
 
     def _update_iot_subscription_state(self):
-        """Recompute plan/expiry from the latest payment; called after a new payment is recorded."""
+        """Recompute plan/expiry from the latest VERIFIED payment; called after a new payment
+        is recorded or a pending bank transfer is verified. Unverified bank transfers never
+        activate anything on their own."""
         for partner in self:
             latest = self.env['otm.iot.subscription.payment'].search(
-                [('partner_id', '=', partner.id)], order='valid_until desc', limit=1
+                [('partner_id', '=', partner.id), ('verified', '=', True)],
+                order='valid_until desc', limit=1
             )
             if latest:
                 partner.iot_subscription_plan_id = latest.plan_id
                 partner.iot_subscription_valid_until = latest.valid_until
 
-    def action_renew_iot_subscription(self, plan_id=False, payment_reference=False):
+    def action_renew_iot_subscription(self, plan_id=False, payment_reference=False, payment_method='online'):
         self.ensure_one()
         plan = self.env['otm.iot.subscription.plan'].browse(plan_id) if plan_id else self.iot_subscription_plan_id
         if not plan:
@@ -44,4 +47,5 @@ class ResPartner(models.Model):
             'partner_id': self.id,
             'plan_id': plan.id,
             'payment_reference': payment_reference,
+            'payment_method': payment_method,
         })

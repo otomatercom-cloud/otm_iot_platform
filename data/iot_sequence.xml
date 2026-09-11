@@ -4,4 +4,27 @@
         <field name="key">otm_iot_platform.bridge_key</field>
         <field name="value">CHANGE_ME_SET_A_RANDOM_SECRET_IN_SETTINGS</field>
     </record>
+
+    <!-- Bank transfer details shown to customers on the app's manual-payment screen.
+         Edit via Settings > Technical > Parameters > System Parameters. -->
+    <record id="ir_config_bank_account_name" model="ir.config_parameter">
+        <field name="key">otm_iot_platform.bank_account_name</field>
+        <field name="value">Otomater Software Pvt Ltd</field>
+    </record>
+    <record id="ir_config_bank_account_number" model="ir.config_parameter">
+        <field name="key">otm_iot_platform.bank_account_number</field>
+        <field name="value">CHANGE_ME</field>
+    </record>
+    <record id="ir_config_bank_ifsc" model="ir.config_parameter">
+        <field name="key">otm_iot_platform.bank_ifsc</field>
+        <field name="value">CHANGE_ME</field>
+    </record>
+    <record id="ir_config_bank_name" model="ir.config_parameter">
+        <field name="key">otm_iot_platform.bank_name</field>
+        <field name="value">CHANGE_ME</field>
+    </record>
+    <record id="ir_config_bank_upi_id" model="ir.config_parameter">
+        <field name="key">otm_iot_platform.bank_upi_id</field>
+        <field name="value">CHANGE_ME@upi</field>
+    </record>
 </odoo>

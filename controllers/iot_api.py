@@ -112,6 +112,84 @@ class IotCustomerController(http.Controller):
     """Endpoints called by the customer-facing app (Next.js PWA), authenticated as a logged-in
     Odoo user (portal or internal) via normal session auth (cookie set at login)."""
 
+    @http.route('/api/iot/plans', type='http', auth='user', methods=['GET'], csrf=False)
+    def list_plans(self, **kwargs):
+        plans = request.env['otm.iot.subscription.plan'].search([('active', '=', True)], order='price')
+        return _json_response({
+            'plans': [{
+                'id': p.id,
+                'name': p.name,
+                'price': p.price,
+                'currency': p.currency_id.name,
+                'duration_days': p.duration_days,
+                'max_devices': p.max_devices,
+                'description': p.description or '',
+            } for p in plans],
+        })
+
+    @http.route('/api/iot/subscribe/confirm', type='http', auth='user', methods=['POST'], csrf=False)
+    def confirm_subscription(self, **kwargs):
+        """Called by our own Next.js server (never the browser) after it has independently
+        verified the Razorpay payment signature. Trust boundary: session auth identifies the
+        customer, but the payment itself was already verified server-to-server before this call."""
+        payload = _get_json_body()
+        partner = request.env.user.partner_id
+        plan_id = _safe_int(payload.get('plan_id'))
+        payment_reference = payload.get('payment_reference')
+
+        plan = request.env['otm.iot.subscription.plan'].sudo().browse(plan_id)
+        if not plan.exists() or not plan.active:
+            return _json_response({'error': 'invalid_plan'}, status=400)
+
+        payment = partner.sudo().action_renew_iot_subscription(
+            plan_id=plan.id, payment_reference=payment_reference
+        )
+        if not payment:
+            return _json_response({'error': 'renewal_failed'}, status=500)
+
+        return _json_response({
+            'ok': True,
+            'plan': plan.name,
+            'valid_until': str(partner.iot_subscription_valid_until or ''),
+        })
+
+    @http.route('/api/iot/bank-details', type='http', auth='user', methods=['GET'], csrf=False)
+    def bank_details(self, **kwargs):
+        ICP = request.env['ir.config_parameter'].sudo()
+        return _json_response({
+            'account_name': ICP.get_param('otm_iot_platform.bank_account_name', ''),
+            'account_number': ICP.get_param('otm_iot_platform.bank_account_number', ''),
+            'ifsc': ICP.get_param('otm_iot_platform.bank_ifsc', ''),
+            'bank_name': ICP.get_param('otm_iot_platform.bank_name', ''),
+            'upi_id': ICP.get_param('otm_iot_platform.bank_upi_id', ''),
+        })
+
+    @http.route('/api/iot/subscribe/bank-transfer', type='http', auth='user', methods=['POST'], csrf=False)
+    def submit_bank_transfer(self, **kwargs):
+        """Customer declares they've sent a bank transfer. This does NOT activate anything -
+        it creates an unverified payment record an admin must approve (see action_verify_payment).
+        Testing-mode friendly: no gateway required, just a manual reconciliation step."""
+        payload = _get_json_body()
+        partner = request.env.user.partner_id
+        plan_id = _safe_int(payload.get('plan_id'))
+        reference = payload.get('reference')
+        note = payload.get('note')
+
+        plan = request.env['otm.iot.subscription.plan'].sudo().browse(plan_id)
+        if not plan.exists() or not plan.active:
+            return _json_response({'error': 'invalid_plan'}, status=400)
+        if not reference:
+            return _json_response({'error': 'reference_required'}, status=400)
+
+        payment = request.env['otm.iot.subscription.payment'].sudo().create({
+            'partner_id': partner.id,
+            'plan_id': plan.id,
+            'payment_reference': reference,
+            'payment_method': 'bank_transfer',
+            'customer_note': note,
+        })
+        return _json_response({'ok': True, 'status': 'pending_verification', 'payment_id': payment.id})
+
     @http.route('/api/iot/devices', type='http', auth='user', methods=['GET'], csrf=False)
     def list_devices(self, **kwargs):
         partner = request.env.user.partner_id
