@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_iot_subscription_plan_list" model="ir.ui.view">
+        <field name="name">otm.iot.subscription.plan.list</field>
+        <field name="model">otm.iot.subscription.plan</field>
+        <field name="arch" type="xml">
+            <list editable="bottom">
+                <field name="name"/>
+                <field name="price"/>
+                <field name="duration_days"/>
+                <field name="max_devices"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_iot_subscription_plan" model="ir.actions.act_window">
+        <field name="name">Subscription Plans</field>
+        <field name="res_model">otm.iot.subscription.plan</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <record id="view_iot_subscription_payment_list" model="ir.ui.view">
+        <field name="name">otm.iot.subscription.payment.list</field>
+        <field name="model">otm.iot.subscription.payment</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="partner_id"/>
+                <field name="plan_name"/>
+                <field name="amount"/>
+                <field name="payment_date"/>
+                <field name="valid_until"/>
+                <field name="payment_reference"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_iot_subscription_payment" model="ir.actions.act_window">
+        <field name="name">Subscription Payments</field>
+        <field name="res_model">otm.iot.subscription.payment</field>
+        <field name="view_mode">list,form</field>
+    </record>
+</odoo>

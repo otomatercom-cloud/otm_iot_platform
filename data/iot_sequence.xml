@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="ir_config_bridge_key_note" model="ir.config_parameter">
+        <field name="key">otm_iot_platform.bridge_key</field>
+        <field name="value">CHANGE_ME_SET_A_RANDOM_SECRET_IN_SETTINGS</field>
+    </record>
+</odoo>

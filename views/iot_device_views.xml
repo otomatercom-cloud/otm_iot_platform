@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_iot_device_list" model="ir.ui.view">
+        <field name="name">otm.iot.device.list</field>
+        <field name="model">otm.iot.device</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="device_type_id"/>
+                <field name="external_id"/>
+                <field name="status"/>
+                <field name="last_seen"/>
+                <field name="location"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_iot_device_kanban" model="ir.ui.view">
+        <field name="name">otm.iot.device.kanban</field>
+        <field name="model">otm.iot.device</field>
+        <field name="arch" type="xml">
+            <kanban class="o_kanban_small_column">
+                <field name="name"/>
+                <field name="status"/>
+                <field name="location"/>
+                <field name="partner_id"/>
+                <templates>
+                    <t t-name="card">
+                        <div class="oe_kanban_card oe_kanban_global_click">
+                            <strong><field name="name"/></strong>
+                            <div class="text-muted"><field name="partner_id"/></div>
+                            <div><field name="location"/></div>
+                            <span t-attf-class="badge #{record.status.raw_value == 'online' ? 'text-bg-success' : 'text-bg-secondary'}">
+                                <field name="status"/>
+                            </span>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="view_iot_device_form" model="ir.ui.view">
+        <field name="name">otm.iot.device.form</field>
+        <field name="model">otm.iot.device</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_regenerate_secret" type="object" string="Regenerate Device Secret" class="btn-secondary"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="partner_id"/>
+                            <field name="device_type_id"/>
+                            <field name="protocol"/>
+                            <field name="external_id"/>
+                            <field name="location"/>
+                        </group>
+                        <group>
+                            <field name="status"/>
+                            <field name="last_seen"/>
+                            <field name="device_secret"/>
+                            <field name="mqtt_topic_state" invisible="protocol != 'mqtt'"/>
+                            <field name="mqtt_topic_command" invisible="protocol != 'mqtt'"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Channels">
+                            <field name="channel_ids">
+                                <list editable="bottom">
+                                    <field name="channel_no"/>
+                                    <field name="name"/>
+                                    <field name="is_on"/>
+                                    <field name="last_changed"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Recent Commands">
+                            <field name="command_ids">
+                                <list>
+                                    <field name="create_date"/>
+                                    <field name="channel_no"/>
+                                    <field name="command"/>
+                                    <field name="state"/>
+                                    <field name="error_message"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Event Log">
+                            <field name="log_ids">
+                                <list>
+                                    <field name="timestamp"/>
+                                    <field name="channel_no"/>
+                                    <field name="event_type"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_iot_device" model="ir.actions.act_window">
+        <field name="name">Devices</field>
+        <field name="res_model">otm.iot.device</field>
+        <field name="view_mode">kanban,list,form</field>
+    </record>
+</odoo>

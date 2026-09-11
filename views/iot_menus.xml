@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="menu_iot_root" name="IoT Platform" sequence="10" groups="group_iot_manager"/>
+
+    <menuitem id="menu_iot_devices" name="Devices" parent="menu_iot_root" action="action_iot_device" sequence="10"/>
+
+    <menuitem id="menu_iot_structure" name="Structure" parent="menu_iot_root" sequence="20"/>
+    <menuitem id="menu_iot_device_type" name="Device Types" parent="menu_iot_structure" action="action_iot_device_type" sequence="10"/>
+
+    <menuitem id="menu_iot_subscriptions" name="Subscriptions" parent="menu_iot_root" sequence="30"/>
+    <menuitem id="menu_iot_subscription_plan" name="Plans" parent="menu_iot_subscriptions" action="action_iot_subscription_plan" sequence="10"/>
+    <menuitem id="menu_iot_subscription_payment" name="Payments" parent="menu_iot_subscriptions" action="action_iot_subscription_payment" sequence="20"/>
+</odoo>

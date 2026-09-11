@@ -1,0 +1,12 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_iot_device_type_manager,otm.iot.device.type manager,model_otm_iot_device_type,group_iot_manager,1,1,1,1
+access_iot_device_manager,otm.iot.device manager,model_otm_iot_device,group_iot_manager,1,1,1,1
+access_iot_device_channel_manager,otm.iot.device.channel manager,model_otm_iot_device_channel,group_iot_manager,1,1,1,1
+access_iot_device_command_manager,otm.iot.device.command manager,model_otm_iot_device_command,group_iot_manager,1,1,1,1
+access_iot_device_log_manager,otm.iot.device.log manager,model_otm_iot_device_log,group_iot_manager,1,1,1,1
+access_iot_subscription_plan_manager,otm.iot.subscription.plan manager,model_otm_iot_subscription_plan,group_iot_manager,1,1,1,1
+access_iot_subscription_payment_manager,otm.iot.subscription.payment manager,model_otm_iot_subscription_payment,group_iot_manager,1,1,1,1
+access_iot_device_portal,otm.iot.device portal,model_otm_iot_device,group_iot_customer_portal,1,0,0,0
+access_iot_device_channel_portal,otm.iot.device.channel portal,model_otm_iot_device_channel,group_iot_customer_portal,1,1,0,0
+access_iot_device_log_portal,otm.iot.device.log portal,model_otm_iot_device_log,group_iot_customer_portal,1,0,0,0
+access_iot_subscription_plan_portal,otm.iot.subscription.plan portal,model_otm_iot_subscription_plan,group_iot_customer_portal,1,0,0,0
