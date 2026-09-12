@@ -6,6 +6,8 @@
 
     <menuitem id="menu_iot_structure" name="Structure" parent="menu_iot_root" sequence="20"/>
     <menuitem id="menu_iot_device_type" name="Device Types" parent="menu_iot_structure" action="action_iot_device_type" sequence="10"/>
+    <menuitem id="menu_iot_home" name="Homes" parent="menu_iot_structure" action="action_iot_home" sequence="20"/>
+    <menuitem id="menu_iot_room" name="Rooms" parent="menu_iot_structure" action="action_iot_room" sequence="30"/>
 
     <menuitem id="menu_iot_subscriptions" name="Subscriptions" parent="menu_iot_root" sequence="30"/>
     <menuitem id="menu_iot_subscription_plan" name="Plans" parent="menu_iot_subscriptions" action="action_iot_subscription_plan" sequence="10"/>

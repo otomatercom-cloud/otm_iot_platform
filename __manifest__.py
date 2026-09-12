@@ -26,6 +26,7 @@ customer app and for the external MQTT/Tuya bridge service.
         'data/iot_sequence.xml',
         'data/demo_data.xml',
         'views/iot_device_type_views.xml',
+        'views/iot_home_views.xml',
         'views/iot_device_views.xml',
         'views/iot_subscription_views.xml',
         'views/iot_menus.xml',

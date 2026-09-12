@@ -36,7 +36,9 @@ class IotDevice(models.Model):
     mqtt_topic_state = fields.Char(string='MQTT State Topic', help='e.g. otm/iot/<external_id>/state')
     mqtt_topic_command = fields.Char(string='MQTT Command Topic', help='e.g. otm/iot/<external_id>/cmd')
 
-    location = fields.Char(string='Location / Room')
+    room_id = fields.Many2one('otm.iot.room', string='Room', index=True,
+                               help='Structured room assignment. When set, "Location" below is kept in sync automatically.')
+    location = fields.Char(string='Location / Room', help='Free-text fallback shown when no structured Room is assigned.')
     status = fields.Selection([
         ('online', 'Online'),
         ('offline', 'Offline'),
@@ -69,6 +71,9 @@ class IotDevice(models.Model):
                 vals['mqtt_topic_state'] = 'otm/iot/%s/state' % vals['external_id']
             if not vals.get('mqtt_topic_command') and vals.get('external_id'):
                 vals['mqtt_topic_command'] = 'otm/iot/%s/cmd' % vals['external_id']
+            if vals.get('room_id') and not vals.get('location'):
+                room = self.env['otm.iot.room'].browse(vals['room_id'])
+                vals['location'] = room.name
         records = super().create(vals_list)
         for record in records:
             # Only enforce the subscription/device-limit check when a customer is assigned
@@ -81,6 +86,9 @@ class IotDevice(models.Model):
         return records
 
     def write(self, vals):
+        if vals.get('room_id'):
+            room = self.env['otm.iot.room'].browse(vals['room_id'])
+            vals.setdefault('location', room.name)
         result = super().write(vals)
         if vals.get('partner_id'):
             for record in self:
@@ -121,6 +129,15 @@ class IotDevice(models.Model):
     def action_regenerate_claim_code(self):
         for record in self:
             record.claim_code = secrets.token_hex(4).upper()
+
+    def assign_room(self, room):
+        """Move this device into a room. room must belong to the same customer as the device -
+        prevents a customer from ever pointing their device at someone else's room."""
+        self.ensure_one()
+        if room and room.partner_id != self.partner_id:
+            return False, 'room_not_yours'
+        self.write({'room_id': room.id if room else False})
+        return self, False
 
     def action_send_command(self, channel_no, command):
         """Queue a switch command for the bridge service to deliver (MQTT publish or Tuya API call)."""

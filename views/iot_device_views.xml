@@ -66,6 +66,7 @@
                             <field name="device_type_id"/>
                             <field name="protocol"/>
                             <field name="external_id"/>
+                            <field name="room_id"/>
                             <field name="location"/>
                         </group>
                         <group>

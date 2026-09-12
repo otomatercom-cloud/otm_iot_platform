@@ -1,4 +1,6 @@
 from . import iot_device_type
+from . import iot_home
+from . import iot_room
 from . import iot_device
 from . import iot_device_channel
 from . import iot_device_command

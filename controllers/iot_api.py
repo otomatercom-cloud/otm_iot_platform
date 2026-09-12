@@ -215,6 +215,10 @@ class IotCustomerController(http.Controller):
                 'type': d.device_type_id.name,
                 'icon': d.device_type_id.icon,
                 'location': d.location,
+                'room_id': d.room_id.id or False,
+                'room_name': d.room_id.name or False,
+                'home_id': d.room_id.home_id.id or False,
+                'home_name': d.room_id.home_id.name or False,
                 'status': d.status,
                 'last_seen': str(d.last_seen or ''),
                 'channels': [{
@@ -225,6 +229,77 @@ class IotCustomerController(http.Controller):
                 } for c in d.channel_ids],
             } for d in devices],
         })
+
+    @http.route('/api/iot/homes', type='http', auth='user', methods=['GET'], csrf=False)
+    def list_homes(self, **kwargs):
+        partner = request.env.user.partner_id
+        homes = request.env['otm.iot.home'].search([('partner_id', '=', partner.id)])
+        return _json_response({
+            'homes': [{
+                'id': h.id,
+                'name': h.name,
+                'address': h.address or '',
+                'rooms': [{
+                    'id': r.id,
+                    'name': r.name,
+                    'icon': r.icon,
+                    'device_count': r.device_count,
+                } for r in h.room_ids],
+            } for h in homes],
+        })
+
+    @http.route('/api/iot/homes', type='http', auth='user', methods=['POST'], csrf=False)
+    def create_home(self, **kwargs):
+        payload = _get_json_body()
+        partner = request.env.user.partner_id
+        name = (payload.get('name') or '').strip()
+        if not name:
+            return _json_response({'error': 'name_required'}, status=400)
+        home = request.env['otm.iot.home'].sudo().create({
+            'name': name,
+            'partner_id': partner.id,
+            'address': payload.get('address'),
+        })
+        return _json_response({'ok': True, 'home_id': home.id})
+
+    @http.route('/api/iot/rooms', type='http', auth='user', methods=['POST'], csrf=False)
+    def create_room(self, **kwargs):
+        payload = _get_json_body()
+        partner = request.env.user.partner_id
+        home_id = _safe_int(payload.get('home_id'))
+        name = (payload.get('name') or '').strip()
+        if not name:
+            return _json_response({'error': 'name_required'}, status=400)
+
+        home = request.env['otm.iot.home'].sudo().browse(home_id)
+        if not home.exists() or home.partner_id.id != partner.id:
+            return _json_response({'error': 'home_not_found_or_not_yours'}, status=404)
+
+        room = request.env['otm.iot.room'].sudo().create({
+            'name': name,
+            'home_id': home.id,
+            'icon': payload.get('icon'),
+        })
+        return _json_response({'ok': True, 'room_id': room.id})
+
+    @http.route('/api/iot/device/assign-room', type='http', auth='user', methods=['POST'], csrf=False)
+    def assign_device_room(self, **kwargs):
+        payload = _get_json_body()
+        partner = request.env.user.partner_id
+        device_id = _safe_int(payload.get('device_id'))
+        room_id = _safe_int(payload.get('room_id'))  # 0/False clears the room
+
+        device = request.env['otm.iot.device'].search([
+            ('id', '=', device_id), ('partner_id', '=', partner.id),
+        ], limit=1)
+        if not device:
+            return _json_response({'error': 'device_not_found_or_not_yours'}, status=404)
+
+        room = request.env['otm.iot.room'].sudo().browse(room_id) if room_id else False
+        result, error = device.sudo().assign_room(room)
+        if error:
+            return _json_response({'error': error}, status=400)
+        return _json_response({'ok': True})
 
     @http.route('/api/iot/devices/bulk-toggle', type='http', auth='user', methods=['POST'], csrf=False)
     def bulk_toggle(self, **kwargs):

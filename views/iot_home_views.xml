@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_iot_home_list" model="ir.ui.view">
+        <field name="name">otm.iot.home.list</field>
+        <field name="model">otm.iot.home</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="address"/>
+                <field name="device_count"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_iot_home_form" model="ir.ui.view">
+        <field name="name">otm.iot.home.form</field>
+        <field name="model">otm.iot.home</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name"/></h1>
+                    </div>
+                    <group>
+                        <field name="partner_id"/>
+                        <field name="address"/>
+                    </group>
+                    <notebook>
+                        <page string="Rooms">
+                            <field name="room_ids">
+                                <list editable="bottom">
+                                    <field name="name"/>
+                                    <field name="icon"/>
+                                    <field name="device_count"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_iot_home" model="ir.actions.act_window">
+        <field name="name">Homes</field>
+        <field name="res_model">otm.iot.home</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <record id="view_iot_room_list" model="ir.ui.view">
+        <field name="name">otm.iot.room.list</field>
+        <field name="model">otm.iot.room</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="home_id"/>
+                <field name="partner_id"/>
+                <field name="icon"/>
+                <field name="device_count"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_iot_room" model="ir.actions.act_window">
+        <field name="name">Rooms</field>
+        <field name="res_model">otm.iot.room</field>
+        <field name="view_mode">list,form</field>
+    </record>
+</odoo>
